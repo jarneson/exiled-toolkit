@@ -1,0 +1,13 @@
+﻿@model System.String
+@{
+    Layout = null;
+}
+
+@if (Model == null || Model.Length == 0)
+{
+    <text>No Json Currently Loaded</text>
+}
+else
+{
+    <text>@Model</text>
+}

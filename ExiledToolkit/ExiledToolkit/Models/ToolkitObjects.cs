@@ -7,7 +7,7 @@ namespace ExiledToolkit.Models
 {
     namespace ToolkitObjects
     {
-        class Item
+        public class Item
         {
             public Item()
             {

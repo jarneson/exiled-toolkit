@@ -1,0 +1,21 @@
+﻿@{
+    ViewBag.Title = "LoadStash";
+}
+
+<h2>LoadStash</h2>
+
+@using (Html.BeginForm("SubmitJson", "Stash"))
+{
+    <fieldset>
+        <ol>
+            <li>
+                @Html.Label("Json From Chrome Extension:")
+            </li><li>
+                @Html.TextArea("inJson")
+            </li><li>
+                <input type="submit" value="pushJson" />
+            </li>
+        </ol>
+    </fieldset>
+}
+<iframe src="/Stash/CurrentJson"></iframe>
