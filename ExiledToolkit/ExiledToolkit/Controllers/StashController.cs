@@ -8,9 +8,6 @@ namespace ExiledToolkit.Controllers
 {
     public class StashController : Controller
     {
-        //
-        // GET: /Stash/
-
         private String StashItemListVar = "Stash";
         private String StashJsonVar = "StashJson";
 
@@ -40,10 +37,6 @@ namespace ExiledToolkit.Controllers
             if (Session[StashJsonVar] != null)
             {
                 lJson = (String)Session[StashJsonVar];
-            }
-            else
-            {
-                lJson = "Blah";
             }
 
             return View((object)lJson);
