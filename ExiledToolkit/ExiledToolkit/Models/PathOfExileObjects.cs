@@ -7,6 +7,11 @@ namespace ExiledToolkit.Models
 {
     namespace PathOfExileObjects
     {
+        public class TempJson
+        {
+            public String type;
+            public List<Item> items;
+        }
         public class StashTab
         {
             public List<Item> items;

@@ -3,21 +3,40 @@
     ViewBag.Title = "Index";
 }
 
+
+<h2>Index</h2>
+<div>
 @if (Model.Count == 0)
 {
-    <script type="text/javascript">
-        alert("Model empty");
-    </script>
+    <text>No Items</text>
 }
 else
 {
-    <script type="text/javascript">
-        alert("Model filled");
-    </script>
+    <text>Items:</text> <br />
+    <table id='itemtable'>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Weapon Type</th>
+        <th>Description</th>
+    </tr>
+    @foreach (var i in Model)
+    {
+        <tr>
+        <td>
+            @i.Name
+        </td>
+        <td>
+            @i.Type
+        </td>
+        <td>
+            @i.WeaponType
+        </td>
+        <td>
+            @i.Description
+        </td>
+        </tr>
+    }
+    </table>
 }
-
-<h2>Index</h2>
-
-<div id='jsonget'>
-Div for pasting in json from chrome app.
 </div>
