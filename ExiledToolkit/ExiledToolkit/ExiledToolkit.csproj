@@ -169,6 +169,7 @@
     </Compile>
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\PathOfExileObjects.cs" />
+    <Compile Include="Models\StashViewModel.cs" />
     <Compile Include="Models\ToolkitObjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

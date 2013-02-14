@@ -14,16 +14,26 @@ namespace ExiledToolkit.Controllers
 
         public ActionResult Index()
         {
-            List<ExiledToolkit.Models.ToolkitObjects.Item> lItemList = null;
+            ExiledToolkit.Models.StashViewModel lModel = null;
             if (Session[StashItemListVar] != null)
             {
-                lItemList = (List<ExiledToolkit.Models.ToolkitObjects.Item>)Session[StashItemListVar];
+                List<ExiledToolkit.Models.ToolkitObjects.Item> lItemList = (List<ExiledToolkit.Models.ToolkitObjects.Item>)Session[StashItemListVar];
+                lModel = new Models.StashViewModel();
+
+                foreach (ExiledToolkit.Models.ToolkitObjects.Item item in lItemList)
+                {
+                    if (!lModel.Tabs.ContainsKey(item.BaseType))
+                    {
+                        lModel.Tabs[item.BaseType] = new Models.StashViewTab();
+                    }
+                    lModel.Tabs[item.BaseType].Items.Add(item);
+                }
             }
             else
             {
-                lItemList = new List<ExiledToolkit.Models.ToolkitObjects.Item>();
+                return RedirectToAction("LoadStash");
             }
-            return View(lItemList);
+            return View(lModel);
         }
 
         public ActionResult LoadStash()

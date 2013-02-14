@@ -20,10 +20,11 @@ namespace ExiledToolkit.Models
             //public List<Object> sockets;
             public String Name; //public String name;
             public String Type; //public String typeLine;
-            public String WeaponType;
+            public String BaseType;
             //public bool identified;
             //public List<Property> properties;
             public List<String> PropertyNames;
+            public List<SkillTypes> SkillGemTypes;
             //public List<Property> requirements;
             //public List<String> implicitMods;
             //public List<String> explicitMods;
@@ -40,11 +41,14 @@ namespace ExiledToolkit.Models
 
             public Item(ExiledToolkit.Models.PathOfExileObjects.Item pItem)
             {
+                PropertyNames = new List<string>();
+                SkillGemTypes = new List<SkillTypes>();
+
                 JSONDefinition = JsonConvert.SerializeObject(pItem);
                 Name = pItem.name;
                 Type = pItem.typeLine;
                 Description = pItem.descrText;
-                PropertyNames = new List<string>();
+                BaseType = String.Empty;
                 
                 //Parse through properties
                 if (pItem.properties != null)
@@ -52,6 +56,33 @@ namespace ExiledToolkit.Models
                     foreach (ExiledToolkit.Models.PathOfExileObjects.Property fProp in pItem.properties)
                     {
                         EvaluateProperty(fProp);
+                    }
+                }
+                if (BaseType == String.Empty)
+                {
+                    if (Type.Contains("Belt"))
+                    {
+                        BaseType = "Belt";
+                    }
+                    else if (Type.Contains("Ring"))
+                    {
+                        BaseType = "Ring";
+                    }
+                    else if (Type.Contains("Amulet"))
+                    {
+                        BaseType = "Amulet";
+                    }
+                    else if (Type.Contains("Flask"))
+                    {
+                        BaseType = "Flask";
+                    }
+                    else if (Description != null && Description.Length > 0)
+                    {
+                        BaseType = "Currency";
+                    }
+                    else
+                    {
+                        BaseType = "Armor";
                     }
                 }
             }
@@ -64,9 +95,13 @@ namespace ExiledToolkit.Models
             private void EvaluateProperty(ExiledToolkit.Models.PathOfExileObjects.Property pProp)
             {
                 PropertyNameType lPropType = EvaluatePropertyName(pProp.name);
-                if (lPropType == PropertyNameType.WeaponName)
+                if (lPropType == PropertyNameType.Weapon)
                 {
-                    WeaponType = pProp.name;
+                    BaseType = pProp.name;
+                }
+                else if (lPropType == PropertyNameType.SkillGem)
+                {
+                    BaseType = "Skill Gem";
                 }
             } 
 
@@ -80,11 +115,38 @@ namespace ExiledToolkit.Models
                     if (Enum.TryParse(pName.Replace(" ", "_"), true, out temp))
                     {
                         // weapon..
-                        lType = PropertyNameType.WeaponName;
+                        lType = PropertyNameType.Weapon;
                     }
                     else
                     {
-                        lType = PropertyNameType.Unknown;
+                        // maybe it's a spell
+                        if (pName.Contains(','))
+                        {
+                            lType = PropertyNameType.SkillGem;
+                            String[] tokens = pName.Split(',');
+                            foreach (String s in tokens)
+                            {
+                                SkillTypes type = SkillTypes.Unknown;
+                                if (Enum.TryParse(s, out type))
+                                {
+                                    SkillGemTypes.Add(type);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // It may still be a spell..
+                            SkillTypes type = SkillTypes.Unknown;
+                            if (Enum.TryParse(pName, out type))
+                            {
+                                lType = PropertyNameType.SkillGem;
+                                SkillGemTypes.Add(type);
+                            }
+                            else
+                            {
+                                lType = PropertyNameType.Unknown;
+                            }
+                        }
                     }
                 }
                 return lType;
@@ -110,7 +172,8 @@ namespace ExiledToolkit.Models
                 Energy_Shield,
                 Evasion,
                 Armour,
-                WeaponName
+                Weapon,
+                SkillGem
             }
 
             public enum WeaponTypes
@@ -125,6 +188,27 @@ namespace ExiledToolkit.Models
                 Staff,
                 Two_Handed_Sword,
                 One_Handed_Axe,
+                Bow
+            }
+
+            public enum SkillTypes
+            {
+                Unknown,
+                Cold,
+                Fire,
+                Lightning,
+                Chaos,
+                Spell,
+                Projectile,
+                Trap,
+                Attack,
+                Curse,
+                AoE,
+                Melee,
+                Duration,
+                Support,
+                Minion,
+                Totem,
                 Bow
             }
         }
