@@ -17,18 +17,10 @@ namespace ExiledToolkit.Models
 
     public class StashViewTab
     {
-        public String Name;
         public List<ExiledToolkit.Models.ToolkitObjects.Item> Items;
 
         public StashViewTab()
         {
-            Name = String.Empty;
-            Items = new List<ToolkitObjects.Item>();
-        }
-
-        public StashViewTab(String pName)
-        {
-            Name = pName;
             Items = new List<ToolkitObjects.Item>();
         }
     }

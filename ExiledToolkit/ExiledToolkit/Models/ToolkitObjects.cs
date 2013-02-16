@@ -34,6 +34,7 @@ namespace ExiledToolkit.Models
             //public int y;
             //public String inventoryId;
             //public List<Item> socketedItems;
+            public Dictionary<Stats, Double> Statistics;
 
             public Item()
             {
@@ -43,6 +44,7 @@ namespace ExiledToolkit.Models
             {
                 PropertyNames = new List<string>();
                 SkillGemTypes = new List<SkillTypes>();
+                Statistics = new Dictionary<Stats, double>();
 
                 JSONDefinition = JsonConvert.SerializeObject(pItem);
                 Name = pItem.name;
@@ -92,16 +94,114 @@ namespace ExiledToolkit.Models
                 return String.Format("{0} {1} {2}", Name, Type, Description);
             }
 
+            public String getStatistic(Stats pStat)
+            {
+                String ret = String.Empty;
+                try
+                {
+                    ret = Statistics[pStat].ToString();
+                }
+                catch (Exception)
+                {
+                    ret = "N/A";
+                }
+                return ret;
+            }
+
             private void EvaluateProperty(ExiledToolkit.Models.PathOfExileObjects.Property pProp)
             {
                 PropertyNameType lPropType = EvaluatePropertyName(pProp.name);
-                if (lPropType == PropertyNameType.Weapon)
+                //do something  with that type
+                switch (lPropType)
                 {
-                    BaseType = pProp.name;
-                }
-                else if (lPropType == PropertyNameType.SkillGem)
-                {
-                    BaseType = "Skill Gem";
+                    case PropertyNameType.Stack_Size:
+                        break;
+                    case PropertyNameType.Level:
+                        break;
+                    case PropertyNameType.Mana_Cost_Multiplier:
+                        break;
+                    case PropertyNameType.Mana_Reserved:
+                        break;
+                    case PropertyNameType.Cooldown_Time:
+                        break;
+                    case PropertyNameType.Cast_Time:
+                        break;
+                    case PropertyNameType.Mana_Cost:
+                        break;
+                    case PropertyNameType.Critical_Strike_Chance:
+                        break;
+                    case PropertyNameType.Quality:
+                        break;
+                    case PropertyNameType.Damage_Effectiveness:
+                        break;
+                    case PropertyNameType.Physical_Damage:
+                        break;
+                    case PropertyNameType.Elemental_Damage:
+                        break;
+                    case PropertyNameType.Attacks_per_Second:
+                        break;
+                    case PropertyNameType.Chance_to_Block:
+                        break;
+                    case PropertyNameType.Energy_Shield:
+                        {
+                            String[] lValues = pProp.values[0];
+                            int lEnergyShield;
+                            int lContainsMods;
+                            if (int.TryParse(lValues[0], out lEnergyShield))
+                            {
+                                Statistics[Stats.Energy_Shield] = lEnergyShield;
+                            }
+                            if (int.TryParse(lValues[1], out lContainsMods))
+                            {
+                                if (lContainsMods == 1)
+                                {
+                                    // The armour total is blue, and contains the mods on the item.
+                                }
+                            }
+                            break;
+                        }
+                    case PropertyNameType.Evasion:
+                        {
+                            String[] lValues = pProp.values[0];
+                            int lEvasion;
+                            int lContainsMods;
+                            if (int.TryParse(lValues[0], out lEvasion))
+                            {
+                                Statistics[Stats.Armour] = lEvasion;
+                            }
+                            if (int.TryParse(lValues[1], out lContainsMods))
+                            {
+                                if (lContainsMods == 1)
+                                {
+                                    // The armour total is blue, and contains the mods on the item.
+                                }
+                            }
+                            break;
+                        }
+                    case PropertyNameType.Armour:
+                        {
+                            String[] lValues = pProp.values[0];
+                            int lArmour;
+                            int lContainsMods;
+                            if (int.TryParse(lValues[0], out lArmour))
+                            {
+                                Statistics[Stats.Armour] = lArmour;
+                            }
+                            if (int.TryParse(lValues[1], out lContainsMods))
+                            {
+                                if (lContainsMods == 1)
+                                {
+                                    // The armour total is blue, and contains the mods on the item.
+                                }
+                            }
+                            break;
+                        }
+                    case PropertyNameType.Weapon:
+                        BaseType = pProp.name;
+                        break;
+                    case PropertyNameType.SkillGem:
+                        BaseType = "Skill Gem";
+                        break;
                 }
             } 
 
@@ -210,6 +310,13 @@ namespace ExiledToolkit.Models
                 Minion,
                 Totem,
                 Bow
+            }
+
+            public enum Stats
+            {
+                Armour,
+                Evasion,
+                Energy_Shield,
             }
         }
     }

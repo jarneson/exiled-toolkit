@@ -1,4 +1,5 @@
 ﻿@model ExiledToolkit.Models.StashViewModel
+@using MvcContrib.UI.Grid
 @{
     ViewBag.Title = "Index";
 }
@@ -9,30 +10,21 @@
 }
 else
 {
-    <div id='tabContainer'>
+    <div id='tabContainer' style="width:100%; height:1024px;">
         <ul>
             @foreach(var tab in Model.Tabs)
             {
-                <li><a href='#@tab.Key.Replace(' ', '_')'>@tab.Key</a></li>
+                <li><a href="/Stash/List?BaseType=@tab.Key">@tab.Key</a></li>
             }
         </ul>
-    @foreach(var tab in Model.Tabs)
-    {
-        <div id='@tab.Key.Replace(' ', '_')'>
-            <table>
-                @foreach (var item in tab.Value.Items)
-                {
-                    <tr>
-                        <td>@item.Name</td>
-                        <td>@item.Type</td>
-                        <td>@item.Description</td>
-                    </tr>
-                }
-            </table>
-        </div>
-    }
     </div>
     <script type="text/jscript">
-        $("#tabContainer").tabs();
+        $("#tabContainer").tabs({
+            beforeLoad:function(event, ui) {
+                ui.jqXHR.error(function() {
+                    ui.panel.html("Couldn't load this tab.");
+                });
+            }
+        });
     </script>
 }

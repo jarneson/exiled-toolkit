@@ -4,6 +4,9 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Newtonsoft.Json;
+using MvcContrib.UI.Grid;
+using MvcContrib.Pagination;
+using MvcContrib.Sorting;
 
 namespace ExiledToolkit.Controllers
 {
@@ -75,8 +78,17 @@ namespace ExiledToolkit.Controllers
 
         }
 
-        public ActionResult List()
+        public ActionResult List(String BaseType,
+                                 GridSortOptions sort, 
+                                 int? page)
         {
+            if (Session[StashItemListVar] != null)
+            {
+                List<ExiledToolkit.Models.ToolkitObjects.Item> lItemList = (List<ExiledToolkit.Models.ToolkitObjects.Item>)Session[StashItemListVar];
+                ExiledToolkit.Models.ListViewModel model = new Models.ListViewModel();
+                model.ItemPagedList = lItemList.Where(it => it.BaseType == BaseType).OrderBy(sort.Column, sort.Direction).ToList();
+                return View(model);
+            }
             return View();
         }
     }

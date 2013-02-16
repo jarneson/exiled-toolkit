@@ -1,0 +1,20 @@
+﻿@using MvcContrib.UI.Grid
+@using System.Linq
+@model ExiledToolkit.Models.ListViewModel
+@{
+    Layout = null;
+    ViewBag.Title = "List";
+}
+@if (Model != null)
+{
+    <div>
+        @Html.Grid(Model.ItemPagedList).Columns(column => {
+                column.For(it => it.Name);
+                column.For(it => it.BaseType);
+                column.For(it => it.getStatistic(ExiledToolkit.Models.ToolkitObjects.Item.Stats.Armour)).Named("Armour");
+                column.For(it => it.getStatistic(ExiledToolkit.Models.ToolkitObjects.Item.Stats.Energy_Shield)).Named("Energy Shield");
+                column.For(it => it.getStatistic(ExiledToolkit.Models.ToolkitObjects.Item.Stats.Evasion)).Named("Evasion");
+            })
+    </div>
+    
+}
