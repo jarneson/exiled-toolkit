@@ -86,7 +86,8 @@ namespace ExiledToolkit.Controllers
             {
                 List<ExiledToolkit.Models.ToolkitObjects.Item> lItemList = (List<ExiledToolkit.Models.ToolkitObjects.Item>)Session[StashItemListVar];
                 ExiledToolkit.Models.ListViewModel model = new Models.ListViewModel();
-                model.ItemPagedList = lItemList.Where(it => it.BaseType == BaseType).OrderBy(sort.Column, sort.Direction).ToList();
+                model.ItemPagedList = lItemList.Where(it => it.BaseType == BaseType).AsPagination( page ?? 1, 20);
+                model.ItemSorter = sort;
                 return View(model);
             }
             return View();

@@ -1,10 +1,14 @@
 ﻿@using MvcContrib.UI.Grid
+@using MvcContrib.UI.Pager
 @using System.Linq
 @model ExiledToolkit.Models.ListViewModel
 @{
     Layout = null;
     ViewBag.Title = "List";
 }
+<head>
+    <base target="_self" />
+</head>
 @if (Model != null)
 {
     <div>
@@ -14,7 +18,8 @@
                 column.For(it => it.getStatistic(ExiledToolkit.Models.ToolkitObjects.Item.Stats.Armour)).Named("Armour");
                 column.For(it => it.getStatistic(ExiledToolkit.Models.ToolkitObjects.Item.Stats.Energy_Shield)).Named("Energy Shield");
                 column.For(it => it.getStatistic(ExiledToolkit.Models.ToolkitObjects.Item.Stats.Evasion)).Named("Evasion");
-            })
+            }).Sort(Model.ItemSorter)
+        @Html.Raw(Html.Pager(Model.ItemPagedList))
     </div>
     
 }

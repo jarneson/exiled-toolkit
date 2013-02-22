@@ -36,6 +36,15 @@ namespace ExiledToolkit.Models
             //public List<Item> socketedItems;
             public Dictionary<Stats, Double> Statistics;
 
+            double Speed;
+            Dictionary<DamageTypes, int> MinimumDamage;
+            Dictionary<DamageTypes, int> MaximumDamage;
+
+            int Quantity;
+            int MaxQuanity;
+
+            int CurrentGemLevel;
+
             public Item()
             {
             }
@@ -45,6 +54,8 @@ namespace ExiledToolkit.Models
                 PropertyNames = new List<string>();
                 SkillGemTypes = new List<SkillTypes>();
                 Statistics = new Dictionary<Stats, double>();
+                MinimumDamage = new Dictionary<DamageTypes, int>();
+                MaximumDamage = new Dictionary<DamageTypes, int>();
 
                 JSONDefinition = JsonConvert.SerializeObject(pItem);
                 Name = pItem.name;
@@ -58,6 +69,24 @@ namespace ExiledToolkit.Models
                     foreach (ExiledToolkit.Models.PathOfExileObjects.Property fProp in pItem.properties)
                     {
                         EvaluateProperty(fProp);
+                    }
+                }
+                if (pItem.requirements != null)
+                {
+                    // parse them requirements
+                }
+                if (pItem.implicitMods != null)
+                {
+                    foreach (String mod in pItem.implicitMods)
+                    {
+                        EvaluateMod(mod);
+                    }
+                }
+                if (pItem.explicitMods != null)
+                {
+                    foreach (String mod in pItem.explicitMods)
+                    {
+                        EvaluateMod(mod);
                     }
                 }
                 if (BaseType == String.Empty)
@@ -115,33 +144,106 @@ namespace ExiledToolkit.Models
                 switch (lPropType)
                 {
                     case PropertyNameType.Stack_Size:
-                        break;
+                        {
+                            // Items in this stack
+                            String[] lValues = pProp.values[0];
+                            String lStackSize = lValues[0];
+                            String[] lQuantities = lStackSize.Split('/');
+                            int.TryParse(lQuantities[0], out Quantity);
+                            int.TryParse(lQuantities[1], out MaxQuanity);
+                            break;
+                        }
                     case PropertyNameType.Level:
-                        break;
+                        {
+                            // Current Gem Level
+                            String[] lValues = pProp.values[0];
+                            int.TryParse(lValues[0], out CurrentGemLevel);
+                            break;
+                        }
                     case PropertyNameType.Mana_Cost_Multiplier:
-                        break;
+                        {
+                            // Gems
+                            break;
+                        }
                     case PropertyNameType.Mana_Reserved:
-                        break;
+                        {
+                            // Gems
+                            break;
+                        }
                     case PropertyNameType.Cooldown_Time:
-                        break;
+                        {
+                            // Gems
+                            break;
+                        }
                     case PropertyNameType.Cast_Time:
-                        break;
+                        {
+                            // Gems
+                            break;
+                        }
                     case PropertyNameType.Mana_Cost:
-                        break;
+                        {
+                            // Gems
+                            break;
+                        }
                     case PropertyNameType.Critical_Strike_Chance:
-                        break;
+                        {
+                            break;
+                        }
                     case PropertyNameType.Quality:
-                        break;
+                        {
+                            break;
+                        }
                     case PropertyNameType.Damage_Effectiveness:
-                        break;
+                        {
+                            // Gems
+                            break;
+                        }
                     case PropertyNameType.Physical_Damage:
-                        break;
+                        {
+                            String[] lValues = pProp.values[0];
+                            String lRange = lValues[0];
+                            int lIncludesMods;
+                            int.TryParse(lValues[1], out lIncludesMods);
+
+                            String[] lDamages = lRange.Split('-');
+                            int lMinimum, lMaximum;
+                            int.TryParse(lDamages[0], out lMinimum);
+                            int.TryParse(lDamages[1], out lMaximum);
+
+                            MinimumDamage[DamageTypes.Physical] = lMinimum;
+                            MaximumDamage[DamageTypes.Physical] = lMaximum;
+
+                            break;
+                        }
                     case PropertyNameType.Elemental_Damage:
-                        break;
+                        {
+                            String[] lValues = pProp.values[0];
+                            String lRange = lValues[0];
+                            int lTypeInt;
+                            int.TryParse(lValues[1], out lTypeInt);
+
+                            DamageTypes lType = (DamageTypes)lTypeInt;
+                            String[] lDamages = lRange.Split('-');
+                            int lMinimum, lMaximum;
+                            int.TryParse(lDamages[0], out lMinimum);
+                            int.TryParse(lDamages[1], out lMaximum);
+
+                            MinimumDamage[lType] = lMinimum;
+                            MaximumDamage[lType] = lMaximum;
+
+                            break;
+                        }
                     case PropertyNameType.Attacks_per_Second:
-                        break;
+                        {
+                            // Current Gem Level
+                            String[] lValues = pProp.values[0];
+                            double.TryParse(lValues[0], out Speed);
+                            break;
+                        }
                     case PropertyNameType.Chance_to_Block:
-                        break;
+                        {
+                            break;
+                        }
                     case PropertyNameType.Energy_Shield:
                         {
                             String[] lValues = pProp.values[0];
@@ -252,6 +354,22 @@ namespace ExiledToolkit.Models
                 return lType;
             }
 
+            private void EvaluateMod(String lMod)
+            {
+                if (lMod.StartsWith("Adds"))
+                {
+                    // Probably Damage Mod
+                }
+                else if (lMod.StartsWith("+"))
+                {
+                    // Flat bonus to something or Life/Mana on hit/kill
+                }
+                else if (lMod.Contains("%"))
+                {
+                    // Percent bonus to something
+                }
+            }
+
             public enum PropertyNameType
             {
                 Unknown,
@@ -317,6 +435,14 @@ namespace ExiledToolkit.Models
                 Armour,
                 Evasion,
                 Energy_Shield,
+            }
+
+            public enum DamageTypes
+            {
+                Physical = 1,
+                Fire = 4,
+                Cold = 5,
+                Lightning = 6
             }
         }
     }

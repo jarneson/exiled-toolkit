@@ -14,17 +14,18 @@ else
         <ul>
             @foreach(var tab in Model.Tabs)
             {
-                <li><a href="/Stash/List?BaseType=@tab.Key">@tab.Key</a></li>
+                <li><a href='#@tab.Key.Replace(' ', '_')'>@tab.Key</a></li>
             }
         </ul>
+        @foreach (var tab in Model.Tabs)
+        {
+            <div id='@tab.Key.Replace(' ', '_')' >
+            <iframe src="/Stash/List?BaseType=@tab.Key" style="border: 0px; width:100%; height:100%">
+            </iframe>
+            </div>
+        }
     </div>
     <script type="text/jscript">
-        $("#tabContainer").tabs({
-            beforeLoad:function(event, ui) {
-                ui.jqXHR.error(function() {
-                    ui.panel.html("Couldn't load this tab.");
-                });
-            }
-        });
+        $("#tabContainer").tabs();
     </script>
 }
